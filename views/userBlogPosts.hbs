@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>All Your Posts</h1>
+    {{#each userPosts}}
+    <p>Created By: {{this.user.name}}</p>
+    <p>{{this.title}}</p>
+    <form>
+        <button>Deleted</button>
+    </form>
+    <p>{{this.body}}</p>
+     <form>
+        <button>Edit post</button>
+    </form>
+    <p>{{this.createdAt}}</p>
+    {{/each}}
+    
+</body>
+</html>
