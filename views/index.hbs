@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+     {{>Nav}}
     <h1>Blog Space </h1>
     <h2>Register for an account </h2>
     <form action="/index" method="POST">
@@ -17,19 +18,11 @@
     </form>
 <br/>
 
-<form action="/login" method="POST" >
+{{!-- <form action="/login" method="POST" >
     <p>Login</p>
         <input required  type="email" name="userEmail" placeholder="email"></br>
         <input required  type="password" name="userPassword" placeholder="password"></br>
         <button type="submit">Login</button>
-    </form>
-
-
-    {{!-- {{#if errorMessage}}
-    <h4 class ="alert alert-danger mt-4">{{errorMessage}}</h4>
-        {{/if}}
-{{#if message}}
-<h4 class ="alert alert-danger mt-4">{{message}}</h4>
-{{/if}} --}}
+    </form> --}}
 </body>
 </html>

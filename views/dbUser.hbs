@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+      {{>Nav}}
+    <h1>See all the Datbase users</h1>
+    {{#each users}}
+    
+    <ul> 
+
+    <p>{{this.name}}. Admin status {{this.admin}}</p>
+    <p>{{this.email}}</p>
+    <form action="/delete/{{this._id}}" method="POST">
+        <button>Delete User</button>
+    </form>
+     <form action="/adminUserUpdate/{{this._id}}" method="GET">
+        <button>Update User Details</button>
+    </form>
+
+    <form action="">
+        <button>Blog Posts for {{this.name}}</button>
+    </form>
+    </ul>
+    
+   
+   
+    {{/each}}
+</body>
+</html>

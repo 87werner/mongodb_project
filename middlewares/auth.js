@@ -1,9 +1,10 @@
 const { promisify } = require("util");
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const { EPROTONOSUPPORT } = require("constants");
 
 
-
+//<--------------------- Is the user Logged In ------------------------->
 exports.isLoggedIn = async (req, res, next) => {
     console.log("Checking if user is logged in ");
 
@@ -20,3 +21,14 @@ exports.isLoggedIn = async (req, res, next) => {
 }
 
 // pass this to routes using auth.isLoggedin (why auth? imported in server.js const auth = require('./middlewares/auth'))
+
+//<----------------LOG THE CURRENT USER OUT-------------------------->
+
+exports.logout = (req,res,next) =>{
+    res.cookie('jwt','logout', {
+        expires: new Date( Date.now() + 2*1000),//
+        httpOnly: true
+        });
+
+    next();
+}
