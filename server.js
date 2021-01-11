@@ -1,3 +1,5 @@
+//#
+
 const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
@@ -9,6 +11,7 @@ const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
 const auth = require("./middlewares/auth");
 const hbs = require("hbs");
+const { Console } = require("console");
 
 const app = express();
 dotenv.config({ path: "./.env" }); // holds sensitive information
@@ -111,37 +114,89 @@ app.post("/update", auth.isLoggedIn, async (req, res) => {
   res.send("updated user")
 })
 
+// app.post("/updateUser", auth.isLoggedIn, async (req, res) => {
+
+//   const userId = req.userFound._id
+//   const id = await User.findById(userId)
+  
+//   const isMatch = await bcrypt.compare(req.body.userPassword, id.password)
+  
+//   const hashedPassword = await bcrypt.hash(req.body.newPassword, 8)
+  
+//   if (isMatch == false) {
+  
+//   res.render("update", {
+//   message:"password are incorrect"
+//   } )
+  
+//   } else {
+  
+//   await User.findByIdAndUpdate( userId, {
+//   name: req.body.userName,
+//   email: req.body.userEmail,
+//   password: hashedPassword
+//   });
+//   const message = "profile updated";
+  
+//   res.render('update', {
+  
+//   message:"user updated"
+//   })
+//   }
+  
+  
+//   }
+  
+//   );
+  
+  
+
 
 //<----------------- NEW BLOG POST ---------------------->
 app.get("/blogpost", auth.isLoggedIn, (req, res) => {
-  console.log("ID found whe you click on link to post a blog")
-  console.log(req.userFound._id);
-  console.log(req.userFound.name);
   res.render("newPost");
 });
+
 app.post("/blogpost", auth.isLoggedIn, async (req, res) => {
   await Blogpost.create({
     title: req.body.postTitle,
     body: req.body.postBody,
-    user: req.params.id,
+    user: req.userFound.id,
   });
   res.send("Blog Post Uploaded");
 });
-//<------------- ALL that Users Posts ---------------------------------->
-app.get("/allposts/:id", async (req, res) => {
-  const allposts = await Blogpost.find({ user: req.params.id }).populate(
-    "user",
-    "name"
-  );
-  console.log(allposts);
-
-  res.render("userBlogPosts", {
-    userPosts: allposts,
+//<----------------------- ALL THIS USERS POSTS ----------------------------->
+app.get("/allposts", auth.isLoggedIn, async (req, res) => {
+  
+  const allposts = await Blogpost.find({ user: req.userFound._id }).populate("user","name");
+  let firstObject = allposts[0]
+  console.log("coming from allPosts")
+  console.log(firstObject)
+  
+  console.log("Coming from ")
+  console.log(req.userBlog)
+  
+  res.render("allposts",{
+    firstObject: firstObject,
+    allposts: allposts
   });
 });
 
+//<------------------ EDIT POSTS BY USER -------------------------------->
+app.get("/userPostUpdate", auth.isLoggedIn, async (req, res) => {
+  const thisPost= await Blogpost.find({ user:req.userFound._id})
+  console.log(thisPost)
+
+ 
+  res.render("userPostUpdate", {
+    thisPost: thisPost
+  })
+
+})
+
+
 //ADMIN SECTION
-//<----------------ADMIN PAGE------------------->
+//<------------------------- ADMIN PAGE ---------------------------------->
 app.get("/adminPage", auth.isLoggedIn, (req, res) => {
   if (req.userFound.admin) {
     res.render("adminPage");
@@ -169,8 +224,8 @@ app.post("/delete/:id", auth.isLoggedIn, async (req, res) => {
 });
 
 //<--------------- ADMIN UPDATE A USER -------------------------->
-app.get("/adminUserUpdate/:id", auth.isLoggedIn, async (req, res) => {
-  if(req.userFound.admin){
+app.get("/adminUserUpdate", auth.isLoggedIn, async (req, res) => {
+  if(req.userFound.admin){ 
     
   }
   res.render("thisUser")
@@ -178,7 +233,7 @@ app.get("/adminUserUpdate/:id", auth.isLoggedIn, async (req, res) => {
 
 //LOGIN & LOGOUT SECTIONS
 //<--------------------------Login ----------------------------------------------->>
-
+// produces the cookie which is used for accessibily to the site 
 app.get("/login", (req, res) => {
   res.render("login");
 });
@@ -208,7 +263,7 @@ app.post("/login", async (req, res) => {
 
 app.get("/logout", auth.logout, (req, res) => {
   // res.send("You are logged out");
-  res.redirect("/login");
+  res.render("logBackIn");
 });
 
 // ROUTE NOT FOUND & PORT SECTION

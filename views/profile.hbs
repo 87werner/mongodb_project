@@ -1,30 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <link rel="stylessheet" href="/public/css/profile.css">
+    <link rel="stylessheet" href="/public/css/nav.css">
+    <title>User Profile page</title>
 </head>
+
 <body>
-      {{>Nav}}
-    <h1>User Profile</h1>
-    <p>Name: {{user.name}}</p>
-    <p>Email: {{user.email}}</p>
+    <div>
+        {{>Nav}}
+    </div>
+    <div class="userprofile-title">
+        <h1>{{user.name}}'s profile</h1>
+    </div>
 
-    <form action="/update" method="GET">
-        <button type="submit">Update Account</button>
-    </form>
+    <div class="userprofile-details">
+        <p>Name: {{user.name}}</p>
+        <p>Email: {{user.email}}</p>
+    </div>
 
-   <form action="/delete" method="POST">
-       <button type="submit" >Delete Account</button>
-    </form>
+    <div class="userprofile-controls">
 
-    <a href="/blogpost">Create New Blog Post</a>
-      
-    <a href="/allposts/">All Your Posts</a>
-    <form>
-        <button>All {{user.name}} Posts</button>
-    </form>
+        <div class="up-updatelink">
+            <form action="/update" method="GET">
+                <button type="submit">Update Account</button>
+            </form>
+        </div>
+
+        <div class="up-delete">
+            <form action="/delete" method="POST">
+                <button type="submit">Delete Account</button>
+            </form>
+        </div>
+
+        <div class="up-newblog">
+            <a href="/blogpost">Create New Blog Post</a>
+        </div>
+
+        <div class="up-allpost">
+            <a href="/allposts/">All Your Posts</a>
+        </div>
+
+    </div>
+
 
 </body>
+
 </html>

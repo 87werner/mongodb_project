@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+  
+    <h1>All {{firstObject.user.name}}'s Activity</h1>
+    
+     {{#each allposts}}
+    <input{{this.title}}>
+    <p>{{this.body}}</p>
+    <form action="/userPostUpdate/{{this._id}}" method="get">
+        <button type="submit">Edit this post</button>
+    </form>
+    
+    {{/each}}
+    
+</body>
+</html>
