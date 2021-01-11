@@ -119,7 +119,6 @@ app.post("/update", auth.isLoggedIn, async (req, res) => {
 //<----------------- NEW BLOG POST ---------------------->
 app.get("/blogpost", auth.isLoggedIn, (req, res) => {
   if(req.userFound){ 
-
   }
   res.render("newPost");
 });

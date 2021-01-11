@@ -6,6 +6,7 @@
     <title>Document</title>
 </head>
 <body>
+    {{>Nav}}
     <h1>All Your Posts</h1>
     {{#each userPosts}}
     <p>Created By: {{this.user.name}}</p>
