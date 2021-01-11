@@ -6,13 +6,14 @@
     <title>Document</title>
 </head>
 <body>
+    {{>Nav}}
     <h1>Create a New Blog Post</h1>
     <form action="/blogpost" method="POST">
         <label>Post Title</label>
-        <input type="text" name="postTitle"><br/>
+        <input required type="text" name="postTitle"><br/>
 
         <label>Post Body</label>
-        <textarea type="text" name="postBody"><br/>
+        <textarea required type="text" name="postBody"></textarea><br/>
 
         <button type="submit">Create</button>
     </form>

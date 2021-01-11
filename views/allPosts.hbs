@@ -6,17 +6,21 @@
     <title>Document</title>
 </head>
 <body>
-  
+  {{>Nav}}
     <h1>All {{firstObject.user.name}}'s Activity</h1>
     
      {{#each allposts}}
-    <input{{this.title}}>
+    <p> Title:{{this.title}}</p>
     <p>{{this.body}}</p>
-    <form action="/userPostUpdate/{{this._id}}" method="get">
-        <button type="submit">Edit this post</button>
+  <form action="/userPostUpdate" method="GET">
+        <button type="submit">Edit A Post</button>
+    </form>
+     <form action="/deleteBlog/{{this._id}}" method="get">
+        <button type="submit">Delete Blog</button>
     </form>
     
     {{/each}}
+     
     
 </body>
 </html>

@@ -61,144 +61,123 @@ app.post("/index", async (req, res) => {
   }
 });
 
-
-
 //  USER SECTION
 //<------------------- User Profile -------------------------------> @@@@@@
 app.get("/profile", auth.isLoggedIn, async (req, res) => {
   console.log("GOT name from auth ");
-  console.log(req.userFound.name);
-  const userDB = req.userFound; //  = const userDB = await User.findById(req.params.id)
-  console.log(userDB);
-  res.render("profile", {
-    user: userDB,
-  });
-  if (req.userFound.admin == true) {
- 
+  // console.log(req.userFound.name);
+  if (req.userFound && req.userFound.admin) {
     res.redirect("/adminPage");
-    //   }else{
-    //      res.redirect("profile")
-    //   }
+  } else if (req.userFound) {
+    const userDB = req.userFound; //  = const userDB = await User.findById(req.params.id)
+    console.log(userDB);
+    res.render("profile", {
+      user: userDB,
+    });
+  } else {
+    res.redirect("login");
   }
 });
 
 //<--------------- USER ENABLED DELETE ---------------------->
 
-app.post("/delete/", auth.isLoggedIn,async (req, res) => {
-
-
+app.post("/delete", auth.isLoggedIn, async (req, res) => {
   await User.findByIdAndDelete(req.userFound._id);
 
   res.send("User Deleted");
 });
 
 //<--------------- UPDATE USER DETAILS ------------->
-app.get("/update", auth.isLoggedIn, (req,res) =>{
+app.get("/update", auth.isLoggedIn, (req, res) => {
   const userDB = req.userFound;
-   res.render("userUpdate",{
-     user: userDB 
-   })
-})
+  res.render("userUpdate", {
+    user: userDB,
+  });
+});
+
 app.post("/update", auth.isLoggedIn, async (req, res) => {
-  console.log(req.userFound)
-  let name = req.body.userName;
-  console.log(req.body.userName)
-  let email = req.body.userEmail;
-  const hashedPassword = await bcrypt.hash(req.body.userPassword, 8);
-  await User.findByIdAndUpdate(req.userFound._id),{
-    name: name,
-    email: email,
-    password: hashedPassword
-  }
+  const userId = req.userFound._id;
+  const id = await User.findById(userId);
 
-  res.send("updated user")
-})
+  const isMatch = await bcrypt.compare(req.body.updatePassword, id.password);
+ 
+  const hashedPassword = await bcrypt.hash(req.body.confirmPassword, 8);
 
-// app.post("/updateUser", auth.isLoggedIn, async (req, res) => {
-
-//   const userId = req.userFound._id
-//   const id = await User.findById(userId)
-  
-//   const isMatch = await bcrypt.compare(req.body.userPassword, id.password)
-  
-//   const hashedPassword = await bcrypt.hash(req.body.newPassword, 8)
-  
-//   if (isMatch == false) {
-  
-//   res.render("update", {
-//   message:"password are incorrect"
-//   } )
-  
-//   } else {
-  
-//   await User.findByIdAndUpdate( userId, {
-//   name: req.body.userName,
-//   email: req.body.userEmail,
-//   password: hashedPassword
-//   });
-//   const message = "profile updated";
-  
-//   res.render('update', {
-  
-//   message:"user updated"
-//   })
-//   }
-  
-  
-//   }
-  
-//   );
-  
-  
-
+  if (isMatch) {
+    await User.findByIdAndUpdate(userId, {
+    name: req.body.userName,
+    email: req.body.userEmail,
+    password: hashedPassword,
+  });
+  res.redirect("/profile")
+  } else {
+    res.send("error with password match");
+   
+  };
+});
 
 //<----------------- NEW BLOG POST ---------------------->
 app.get("/blogpost", auth.isLoggedIn, (req, res) => {
+  if(req.userFound){ 
+
+  }
   res.render("newPost");
 });
 
 app.post("/blogpost", auth.isLoggedIn, async (req, res) => {
+if(req.userFound){
   await Blogpost.create({
     title: req.body.postTitle,
     body: req.body.postBody,
     user: req.userFound.id,
   });
-  res.send("Blog Post Uploaded");
+} res.render("/profile");
 });
 //<----------------------- ALL THIS USERS POSTS ----------------------------->
 app.get("/allposts", auth.isLoggedIn, async (req, res) => {
-  
   const allposts = await Blogpost.find({ user: req.userFound._id }).populate("user","name");
-  let firstObject = allposts[0]
-  console.log("coming from allPosts")
-  console.log(firstObject)
-  
-  console.log("Coming from ")
-  console.log(req.userBlog)
-  
-  res.render("allposts",{
+  let firstObject = allposts[0];
+  res.render("allposts", {
     firstObject: firstObject,
-    allposts: allposts
+    allposts: allposts,
   });
 });
 
 //<------------------ EDIT POSTS BY USER -------------------------------->
 app.get("/userPostUpdate", auth.isLoggedIn, async (req, res) => {
-  const thisPost= await Blogpost.find({ user:req.userFound._id})
-  console.log(thisPost)
-
- 
+  const thisPost = await Blogpost.find({ user: req.userFound._id });
   res.render("userPostUpdate", {
-    thisPost: thisPost
-  })
-
+    thisPost: thisPost,
+  });
+});
+app.post("/userPostUpdate/:id", auth.isLoggedIn, async (req, res) => {
+ 
+  if(req.userFound) {
+    await Blogpost.findByIdAndUpdate(req.params.id, {
+      title: req.body.blogTitle,
+      body: req.body.blogBody,
+      user: req.userFound.id,
+    });
+  }
+  res.send("Post updated")
+  
 })
+//<------------------- DELETE BLOG ------------------------------------------->
+
+
+app.get("/deleteBlog/:id", auth.isLoggedIn, async (req, res) => {
+  console.log(req.params.id)
+  if(req.userFound._id)
+  await Blogpost.findByIdAndDelete(req.params.id);
+
+  res.redirect("/profile");
+});
 
 
 //ADMIN SECTION
 //<------------------------- ADMIN PAGE ---------------------------------->
 app.get("/adminPage", auth.isLoggedIn, (req, res) => {
-  if (req.userFound.admin) {
+  if (req.userFound && req.userFound.admin) {
     res.render("adminPage");
   } else {
     res.send("Please return to the home page");
@@ -217,29 +196,32 @@ app.get("/allUser", auth.isLoggedIn, async (req, res) => {
 
 //<--------------- ADMIN DELETE A USER -------------------------->
 app.post("/delete/:id", auth.isLoggedIn, async (req, res) => {
-  if(req.userFound.admin){
+  if (req.userFound.admin) {
     await User.findOneAndDelete(req.params.id);
   }
-  res.render("userDeleted")
+  res.render("userDeleted");
 });
 
 //<--------------- ADMIN UPDATE A USER -------------------------->
-app.get("/adminUserUpdate", auth.isLoggedIn, async (req, res) => {
-  if(req.userFound.admin){ 
-    
+app.get("/adminUserUpdate/:id", auth.isLoggedIn, async (req, res) => {
+  if (req.userFound.admin) {
   }
-  res.render("thisUser")
+  res.render("thisUser");
 });
+
+
 
 //LOGIN & LOGOUT SECTIONS
 //<--------------------------Login ----------------------------------------------->>
-// produces the cookie which is used for accessibily to the site 
+// produces the cookie which is used for accessibily to the site
 app.get("/login", (req, res) => {
   res.render("login");
 });
 
 app.post("/login", async (req, res) => {
   const user = await User.findOne({ email: req.body.userEmail });
+  console.log("data below coming from login")
+  console.log(user)
   const isMatch = await bcrypt.compare(req.body.userPassword, user.password);
   if (isMatch) {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {

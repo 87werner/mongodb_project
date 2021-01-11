@@ -6,13 +6,13 @@
     <title>Document</title>
 </head>
 <body>
-   
+   {{>Nav}}
     <h1>Update your account </h1>
      <form action="/update" method="POST">
         <input required type="text" name="userName" placeholder="{{user.name}}"><br/>
         <input required type="email" name="userEmail" placeholder="{{user.email}}"><br/>
-        <input required type="password" name="userPassword" placeholder="password"><br/>
-        {{!-- <input required type="password" name="confirmPassword" placeholder="confirm password"><br/> --}}
+        <input required type="password" name="updatePassword" placeholder="old password"><br/>
+        <input required type="password" name="confirmPassword" placeholder="new password"><br/>
         <button type="submit">Update</button>
     </form>
   

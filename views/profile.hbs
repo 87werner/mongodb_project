@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylessheet" href="/public/css/profile.css">
-    <link rel="stylessheet" href="/public/css/nav.css">
+    {{!-- <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/nav.css"> --}}
+    <link rel="stylesheet" href="/css/profile.css">
     <title>User Profile page</title>
+    
 </head>
 
 <body>
@@ -25,9 +27,11 @@
     <div class="userprofile-controls">
 
         <div class="up-updatelink">
+
             <form action="/update" method="GET">
                 <button type="submit">Update Account</button>
             </form>
+            
         </div>
 
         <div class="up-delete">
