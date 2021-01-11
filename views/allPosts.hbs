@@ -12,7 +12,7 @@
      {{#each allposts}}
     <p> Title:{{this.title}}</p>
     <p>{{this.body}}</p>
-  <form action="/userPostUpdate" method="GET">
+  <form action="/userPostUpdate/{{this._id}}" method="GET">
         <button type="submit">Edit A Post</button>
     </form>
      <form action="/deleteBlog/{{this._id}}" method="get">

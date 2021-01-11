@@ -74,7 +74,7 @@ app.get("/profile", auth.isLoggedIn, async (req, res) => {
     res.render("profile", {
       user: userDB,
     });
-  } else {
+  }else{
     res.redirect("login");
   }
 });
@@ -130,7 +130,7 @@ if(req.userFound){
     body: req.body.postBody,
     user: req.userFound.id,
   });
-} res.render("/profile");
+} res.render("profile");
 });
 //<----------------------- ALL THIS USERS POSTS ----------------------------->
 app.get("/allposts", auth.isLoggedIn, async (req, res) => {
@@ -143,22 +143,22 @@ app.get("/allposts", auth.isLoggedIn, async (req, res) => {
 });
 
 //<------------------ EDIT POSTS BY USER -------------------------------->
-app.get("/userPostUpdate", auth.isLoggedIn, async (req, res) => {
+app.get("/userPostUpdate/:id", auth.isLoggedIn, async (req, res) => {
   const thisPost = await Blogpost.find({ user: req.userFound._id });
   res.render("userPostUpdate", {
     thisPost: thisPost,
   });
 });
-app.post("/userPostUpdate/:id", auth.isLoggedIn, async (req, res) => {
- 
+app.post("/thePostUpdate/:id", auth.isLoggedIn, async (req, res) => {
+ console.log(req.params._id)
   if(req.userFound) {
-    await Blogpost.findByIdAndUpdate(req.params.id, {
+    await Blogpost.findOneAndUpdate(req.params.id, {
       title: req.body.blogTitle,
       body: req.body.blogBody,
       user: req.userFound.id,
     });
   }
-  res.send("Post updated")
+  res.render("blogUpdated")
   
 })
 //<------------------- DELETE BLOG ------------------------------------------->
@@ -193,21 +193,62 @@ app.get("/allUser", auth.isLoggedIn, async (req, res) => {
   }
 });
 
+
+
+
+
 //<--------------- ADMIN DELETE A USER -------------------------->
+
+
 app.post("/delete/:id", auth.isLoggedIn, async (req, res) => {
+console.log(req.params.id)
   if (req.userFound.admin) {
-    await User.findOneAndDelete(req.params.id);
+    await User.findByIdAndDelete(req.params.id);
   }
   res.render("userDeleted");
 });
 
+
+
+
+
+
 //<--------------- ADMIN UPDATE A USER -------------------------->
 app.get("/adminUserUpdate/:id", auth.isLoggedIn, async (req, res) => {
-  if (req.userFound.admin) {
-  }
-  res.render("thisUser");
+  console.log(req.params.id)
+  const thisUser  = await User.findById(req.params.id)
+  console.log(thisUser)
+  res.render("thisUser",{
+    thisUser: thisUser
+  });
 });
 
+app.post("/adminUserUpdate/thisUser/:id", auth.isLoggedIn, async (req, res) => {
+  console.log("click on admin user update")
+  console.log(req.params._id)
+  await User.findByIdAndUpdate(req.params.id,{
+    name: req.body.userName,
+    email: req.body.userEmail
+  })
+  res.send("user updated from rachel to tom ")
+})
+//<----------------- ADMIN LOOKUP ALL BLOG POST FOR A ONE USER ------------------->
+
+
+
+app.get('/allUsersPosts', auth.isLoggedIn, async (req,res) => {
+
+  const userId = req.userFound._id
+  const id = await User.findById(userId)
+  const allusersPosts = await Blogpost.find({ userId: req.params.id })
+  
+  console.log(allusersPosts)
+  
+  res.render("allUsersPosts", {
+  allPosts: allusersPosts
+  })
+  
+  })
 
 
 //LOGIN & LOGOUT SECTIONS
@@ -222,7 +263,7 @@ app.post("/login", async (req, res) => {
   console.log("data below coming from login")
   console.log(user)
   const isMatch = await bcrypt.compare(req.body.userPassword, user.password);
-  if (isMatch) {
+  if (isMatch){
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_SECRET_IN,
     });
@@ -243,7 +284,7 @@ app.post("/login", async (req, res) => {
 //<-------------Log OUT---------------------------------->
 
 app.get("/logout", auth.logout, (req, res) => {
-  // res.send("You are logged out");
+
   res.render("logBackIn");
 });
 

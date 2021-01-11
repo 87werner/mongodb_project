@@ -22,8 +22,6 @@ exports.isLoggedIn = async (req, res, next) => {
         console.log(req.userBlog)
 
         req.userFound = await User.findById(decoded.id)
-       
-
     }
     
     next()

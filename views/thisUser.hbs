@@ -10,10 +10,11 @@
     {{>Nav}}
     <h1>Admin User Update Page</h1>
 
-    <form action="thisUser/:{{this._id}}" method="POST">
+    <form action="/adminUserUpdate/thisUser/{{thisUser._id}}" method="POST">
         <input required type="text" name="userName" placeholder="Name"><br/>
         <input required type="email" name="userEmail" placeholder="Email"><br/>
         <button type="submit">Update user</button>
     </form>
+
 </body>
 </html>
